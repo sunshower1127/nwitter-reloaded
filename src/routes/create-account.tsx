@@ -2,19 +2,43 @@ import { useState } from "react"
 import styled from "styled-components"
 
 const Wrapper = styled.div`
-
+  height: 100%;
+  width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0px;
 `
 
 const Title = styled.h1`
-  
+  font-size: 42px;
 `
 
 const Form = styled.form`
-  
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
 `
 
 const Input = styled.input`
-  
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: none;
+  width: 100%;
+  font-size: 16px;
+  &[type="submit"] {
+    cursor: pointer;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`
+
+const Error = styled.span`
+  font-weight: 600;
+  color: tomato;
 `
 
 export default function CreateAccount() {
@@ -35,7 +59,7 @@ export default function CreateAccount() {
   }
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(name, email, password);
+
     try {
 
     } catch(e) {
@@ -53,5 +77,6 @@ export default function CreateAccount() {
       <Input onChange={onChange} name="password" value={password} placeholder="Password" type="password" required />
       <Input onChange={onChange} type="submit" value={isLoading ? "Loading" : "Create Account"} />
     </Form>
+    { error !== "" ? <Error>{ error }</Error> : null }
   </Wrapper>
 }
