@@ -1,5 +1,7 @@
+import { addDoc, collection } from "firebase/firestore"
 import { useState } from "react"
 import styled from "styled-components"
+import { auth, db } from "./firebase"
 
 const Form = styled.form`
   display: flex;
@@ -70,8 +72,32 @@ export default function PostTweetForm() {
       setFile(files[0])
     }
   }
+
+  /* Firebase에서 Firestore을 시작해야함.
+   * 그리고 tweets라는 collection(폴더)를 만들어야하고,
+   * Testmode로 해야함 -> 접근권한을 30일동안 모두 허용
+   * js에서는 구조체에 그냥 tweet만 쓰면 -> tweet: tweet 과 같은 뜻임
+   */
+  const onSubmit = async(e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const user = auth.currentUser
+    if (!user || isLoading || tweet == "" || tweet.length > 180) return
+    try {
+      setLoading(true)
+      await addDoc(collection(db, "tweets"), {
+        tweet,
+        createdAt: Date.now(),
+        username: user.displayName || "Anonymous",
+        userId: user.uid
+      })
+    } catch(e) {
+      console.log(e);
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
-    <Form>
+    <Form onSubmit={onSubmit}>
       <TextArea
         value={tweet}
         onChange={onChange}
