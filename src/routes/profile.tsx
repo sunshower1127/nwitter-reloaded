@@ -1,15 +1,17 @@
 import styled from "styled-components"
-import { auth, storage } from "../components/firebase"
+import { auth, db, storage } from "../components/firebase"
 import React, { useState } from "react"
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 import { updateProfile } from "firebase/auth"
+import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore"
+import { ITweet } from "../components/timeline"
+import Tweet from "../components/tweet"
 
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
   gap: 20px;
-
 `
 
 const AvatarUpload = styled.label`
@@ -29,23 +31,31 @@ const AvatarUpload = styled.label`
 `
 
 const AvatarImg = styled.img`
-  width: 100%
+  width: 100%;
 `
 
 const AvatarInput = styled.input`
   display: none;
-
 `
 
 const Name = styled.span`
   font-size: 22px;
 `
 
+const Tweets = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+`
+
 export default function Profile() {
   const user = auth.currentUser
   const [avatar, setAvatar] = useState(user?.photoURL)
-  const onAvatarChange = async (e:React.ChangeEvent<HTMLInputElement>) => {
-    const {files} = e.target
+  const [tweets, setTweets] = useState<ITweet[]>([])
+
+  const onAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target
     if (!user) return
     if (files && files.length === 1) {
       const file = files[0]
@@ -55,6 +65,20 @@ export default function Profile() {
       await updateProfile(user, { photoURL: avatarUrl })
     }
   }
+
+  const fetchTweets = async () => {
+    // 복잡한 query 사용시 실행이 안되는 문제 -> 개발자도구 콘솔 들어가서 에러 링크를 시크릿모드로 들어가면 인덱스가 추가되고 해결됨. 
+    const tweetQuery = query(collection(db, 'tweets'), where('userId', '==', user?.uid), orderBy('createdAt', 'desc'), limit(25))
+    const snapshot = await getDocs(tweetQuery)
+    const tweets = snapshot.docs.map(doc => {
+      const {tweet, createdAt, userId, username, photo} = doc.data()
+      return {tweet, createdAt, userId, username, photo, id: doc.id}
+    })
+    setTweets(tweets)
+  }
+
+  fetchTweets()
+
   return (
     <Wrapper>
       <AvatarUpload htmlFor="avatar">
@@ -66,9 +90,13 @@ export default function Profile() {
           </svg>
         )}
       </AvatarUpload>
-      <AvatarInput onChange={onAvatarChange} id='avatar' type='file' accept='image/*'></AvatarInput>
+      <AvatarInput onChange={onAvatarChange} id='avatar' type='file' accept='image/*' />
       <Name>
         {user?.displayName ?? "Anonymous"}
       </Name>
-    </Wrapper>)
+      <Tweets>
+          {tweets.map(tweet => <Tweet key={tweet.id} {...tweet}></Tweet>)}
+      </Tweets>
+    </Wrapper>
+  )
 }
