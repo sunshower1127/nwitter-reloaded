@@ -1,5 +1,5 @@
-import { Unsubscribe, collection, getDocs, limit, onSnapshot, orderBy, query } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
+import { useState } from "react";
 import styled from "styled-components";
 import { db } from "./firebase";
 import Tweet from "./tweet";
@@ -18,41 +18,30 @@ const Wrapper = styled.div`
   gap: 10px;
   flex-direction: column;
 `
+// interface ITimeline {
+//   toggle: boolean;
+// }
+// 
 
 export default function Timeline() {
   const [tweets, setTweet] = useState<ITweet[]>([])
 
-  useEffect(() => {
-    let unsubscribe: Unsubscribe | null = null
-    const fetchTweets = async () => {
-      const tweetsQuery = query(
-        collection(db, 'tweets'),
-        orderBy('createdAt', 'desc'),
-        limit(25)
-      )
+  const fetchTweets = async () => {
+    const tweetsQuery = query(
+      collection(db, 'tweets'),
+      orderBy('createdAt', 'desc'),
+      limit(25)
+    )
 
-      // const snapshot = await getDocs(tweetsQuery)
-      // const tweets = snapshot.docs.map(doc => {
-      //   const { tweet, createdAt, userId, username, photo } = doc.data()
-      //   return { tweet, createdAt, userId, username, photo, id: doc.id }
-      // })
+    const snapshot = await getDocs(tweetsQuery)
+    const tweets = snapshot.docs.map(doc => {
+      const { tweet, createdAt, userId, username, photo } = doc.data()
+      return { tweet, createdAt, userId, username, photo, id: doc.id }
+    })
+    setTweet(tweets)
+  }
 
-      unsubscribe = await onSnapshot(tweetsQuery, snapshot => {
-        const tweets = snapshot.docs.map(doc => {
-          const { tweet, createdAt, userId, username, photo } = doc.data()
-          return { tweet, createdAt, userId, username, photo, id: doc.id }
-        })
-        setTweet(tweets)
-      })
-    }
-
-    fetchTweets()
-
-    return () => {
-      if (unsubscribe)
-        unsubscribe()
-    }
-  }, [])
+  fetchTweets()
 
 
   return (

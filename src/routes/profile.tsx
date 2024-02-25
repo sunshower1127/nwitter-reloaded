@@ -63,6 +63,7 @@ export default function Profile() {
       const result = await uploadBytes(locationRef, file)
       const avatarUrl = await getDownloadURL(result.ref)
       await updateProfile(user, { photoURL: avatarUrl })
+      setAvatar(user.photoURL)
     }
   }
 

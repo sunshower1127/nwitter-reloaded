@@ -4,6 +4,8 @@ import styled from "styled-components"
 import { auth, db, storage } from "./firebase"
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 
+
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -20,7 +22,6 @@ const TextArea = styled.textarea`
   background-color: black;
   width: 100%;
   resize: none;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   &::placeholder {
     font-size: 16px;
   }
@@ -57,7 +58,10 @@ const SubmitBtn = styled.input`
   }
 `
 
-export default function PostTweetForm() {
+interface IPostTweetForm {
+  refresh : ()=>void;
+}
+export default function PostTweetForm({refresh} : IPostTweetForm) {
 
   const [isLoading, setLoading] = useState(false)
   const [tweet, setTweet] = useState("")
@@ -68,7 +72,7 @@ export default function PostTweetForm() {
   }
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {files} = e.target
+    const { files } = e.target
     if (files && files.length === 1) {
       setFile(files[0])
     }
@@ -79,7 +83,7 @@ export default function PostTweetForm() {
    * Testmode로 해야함 -> 접근권한을 30일동안 모두 허용
    * js에서는 구조체에 그냥 tweet만 쓰면 -> tweet: tweet 과 같은 뜻임
    */
-  const onSubmit = async(e: React.ChangeEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
     const user = auth.currentUser
     if (!user || isLoading || tweet.trim() == "" || tweet.length > 180) return
@@ -99,10 +103,11 @@ export default function PostTweetForm() {
       }
       setTweet('')
       setFile(null)
-    } catch(e) {
-      console.log(e);
+    } catch (e) {
+      console.log(e)
     } finally {
       setLoading(false)
+      refresh()
     }
   }
   return (
@@ -116,7 +121,7 @@ export default function PostTweetForm() {
         required
       ></TextArea>
       <AttachFileButton htmlFor="file-submit">
-        {file? "Photo added V" : "Add photo"}
+        {file ? "Photo added V" : "Add photo"}
       </AttachFileButton>
       <AttachFileInput
         id="file-submit"
@@ -124,7 +129,8 @@ export default function PostTweetForm() {
         accept="image/*"
         onChange={onFileChange}
       ></AttachFileInput>
-      <SubmitBtn type="submit" value={isLoading? "Posting..." : "Post Tweet"}></SubmitBtn>
+      <SubmitBtn type="submit" value={isLoading ? "Posting..." : "Post Tweet"}></SubmitBtn>
     </Form>
+
   )
 }
