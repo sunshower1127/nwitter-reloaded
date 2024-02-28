@@ -17,10 +17,11 @@ const Wrapper = styled.div`
 
 
 export default function Home() {
-  const [toggle, setToggle] = useState(true)
+  const [counter, setCounter] = useState(0)
   const onRefresh = () => {
-    setToggle(cur => !cur)
-    toggle
+    setCounter(cur => cur+1)
+    console.log(counter)
+    
   }
   return (
     <Wrapper>
