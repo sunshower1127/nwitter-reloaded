@@ -1,5 +1,5 @@
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { db } from "./firebase";
 import Tweet from "./tweet";
@@ -23,7 +23,11 @@ const Wrapper = styled.div`
 // }
 // 
 
-export default function Timeline() {
+interface ITimeline {
+  counter: number;
+}
+
+export default function Timeline({counter} : ITimeline) {
   const [tweets, setTweet] = useState<ITweet[]>([])
 
   const fetchTweets = async () => {
@@ -41,9 +45,10 @@ export default function Timeline() {
     setTweet(tweets)
   }
 
-  fetchTweets()
-
-
+  useEffect(()=> {
+    fetchTweets()
+  }, [counter])
+  
   return (
     <Wrapper>
       {tweets.map(tweet => (

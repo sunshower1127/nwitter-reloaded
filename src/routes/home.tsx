@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <Wrapper>
       <PostTweetForm refresh={onRefresh}></PostTweetForm>
-      <Timeline></Timeline>
+      <Timeline counter={counter}></Timeline>
     </Wrapper>
   )
 }
