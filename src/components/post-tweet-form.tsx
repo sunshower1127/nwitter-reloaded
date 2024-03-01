@@ -58,10 +58,7 @@ const SubmitBtn = styled.input`
   }
 `
 
-interface IPostTweetForm {
-  refresh : ()=>void;
-}
-export default function PostTweetForm({refresh} : IPostTweetForm) {
+export default function PostTweetForm({refresh} : {refresh: ()=>void}) {
 
   const [isLoading, setLoading] = useState(false)
   const [tweet, setTweet] = useState("")

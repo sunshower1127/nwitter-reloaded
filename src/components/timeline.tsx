@@ -23,11 +23,7 @@ const Wrapper = styled.div`
 // }
 // 
 
-interface ITimeline {
-  counter: number;
-}
-
-export default function Timeline({counter} : ITimeline) {
+export default function Timeline({counter} : {counter: number}) {
   const [tweets, setTweet] = useState<ITweet[]>([])
 
   const fetchTweets = async () => {
