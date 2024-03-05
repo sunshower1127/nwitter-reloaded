@@ -1,3 +1,18 @@
+# Twitter 클론코딩
+
+## React with vite + Firebsae
+강의 : [노마드코더무료강의](https://nomadcoders.co/nwitter)
+
+기간 : 2학년 겨울방학
+
+[https://nwitter-reloaded-b60ff.web.app](https://nwitter-reloaded-b60ff.web.app) <- *현재 firebase 호스팅중*
+
+기능 : 트위터 클론코딩 -> 인증, 글쓰기
+
+버그 : firestore의 읽기 횟수가 너무 빠르게 리미트인 5만까지 치솟는 오류가 있음. -> 마지막 수정으로 고친 것 같긴 함.
+
+---
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
