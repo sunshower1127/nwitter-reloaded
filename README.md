@@ -1,6 +1,6 @@
 # Twitter 클론코딩
 
-## React with vite + Firebsae
+## React with vite + Firebase
 강의 : [노마드코더무료강의](https://nomadcoders.co/nwitter)
 
 기간 : 2학년 겨울방학
